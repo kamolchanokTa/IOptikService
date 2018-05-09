@@ -15,6 +15,9 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import optik.PropertiesReader;
 
 /**
  * An entity User composed by three fields (id, email, name).
@@ -35,7 +38,7 @@ public class User {
   @Id
   @GeneratedValue(generator = "uuid2")
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
-  @Column(columnDefinition = "BINARY(20)")
+  @Column(columnDefinition = "BINARY(16)")
   private UUID id;
   
   // The user's email
@@ -80,22 +83,15 @@ private String zipcode;
 private char userType;
 
 
-  public User() { }
+  public User() { 
+  }
 
   public User(UUID id) { 
     this.id = id;
   }
   
-  public User(String email, String firstName, String lastName, String dob, String address, String city, String country, String zipcode, char userType, String password) {
-	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	  Date convertedDob;
-		try {
-			convertedDob = sdf.parse(dob);
-			this.DOB = convertedDob;
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+  public User(String email, String firstName, String lastName, Date dob, String address, String city, String country, String zipcode, char userType, String password) {
+	  this.DOB = dob;
 	  this.email = email;
 	  this.firstname = firstName;
 	  this.lastname = lastName;
@@ -132,5 +128,28 @@ private char userType;
 //  public void setName(String value) {
 //    this.name = value;
 //  }
+  
+  public void setAddress(String address, String city, String country, String zipcode) {
+	  this.address = address;
+	  this.city = city;
+	  this.country = country;
+	  this.zipcode = zipcode;
+  }
+  
+  public String getAddress() {
+	  return this.address;
+  }
+  
+  public String getCity() {
+	  return this.city;
+  }
+  
+  public String getCountry() {
+	  return this.country;
+  }
+  
+  public String getZipcode() {
+	  return this.zipcode;
+  }
   
 } // class User
