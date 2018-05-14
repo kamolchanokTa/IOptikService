@@ -3,14 +3,11 @@ package optik.controllers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,7 +38,6 @@ public class UserController extends BaseController {
   UserController() {
 	  super();
   }
-  
 
 /**
    * /create  --> Create a new user and save it in the database.
@@ -57,7 +53,7 @@ public class UserController extends BaseController {
 	  if(isValidAppid(appid)) {
 		  User user = null;
 		  SimpleDateFormat sdf = new SimpleDateFormat(getAppProperties().getDateformat());
-		  System.out.println("creating an user...");
+		  
 		  Date convertedDob = null;
 		  try {
 			  if(userRequest.dob != null) {convertedDob =  sdf.parse(userRequest.dob);}
@@ -129,61 +125,17 @@ public class UserController extends BaseController {
  }
   @RequestMapping(value = "/user/login", method = RequestMethod.POST)
   @ResponseBody
-  public ResponseEntity<?>  create(@RequestBody LoginRequest loginRequest, @RequestHeader(value="appId") String appid, HttpServletRequest req) {
-	  System.out.println("Checking the authentication: " + loginRequest.email.toString());
-	  if(isValidAppid(appid) && req.getSession().getAttribute("User") == null) {
-		  try {
-			  User user = userDao.findByEmailAndPassword(loginRequest.email, loginRequest.password);
-			  if (user != null) {
-				  System.out.println("Successfully logined in...");
-				  System.out.println(req.getSession().getId());
-				  req.getSession().setAttribute("User", user);
-				  req.getSession().setMaxInactiveInterval(60*10);
-				  System.out.println(((User) req.getSession().getAttribute("User")).getEmail());
-			  }
-			  // return new ResponseEntity<>( user, HttpStatus.OK) ;
-			  return new ResponseEntity<>( user , HttpStatus.OK) ;
-
-		  }
-		  catch (Exception ex) {
-			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getFail(), "Error creating the user: " + ex.toString()), HttpStatus.BAD_REQUEST);
-		  }
-	  }
-	  else {
-		  if(req.getSession().getAttribute("User") != null) {
-			  System.out.println("Already logined...");
-			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getSuccess(), "Already logined") , HttpStatus.OK) ;
-		  }
-		  else {
-			  System.out.println("no valid appid");
-			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"), HttpStatus.FORBIDDEN);
-		  }
-	  }	
-    
-  }
-  
-  @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
-  @ResponseBody
-  public ResponseEntity<?>  create(@RequestHeader(value="appId") String appid, HttpServletRequest req) {
-	  System.out.println("Login out...");
+  public ResponseEntity<?>  create(@RequestBody LoginRequest loginRequest, @RequestHeader(value="appId") String appid) {
 	  if(isValidAppid(appid)) {
 		  try {
-			  if(req.getSession().getAttribute("User") != null)
-			  {
-				  req.getSession().setAttribute("User", null);
-				  System.out.println("Successfully logout...");
-				  req.getSession().invalidate();
-			  }
-			  // return new ResponseEntity<>( user, HttpStatus.OK) ;
-			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getSuccess(), "Successfully logout"), HttpStatus.OK) ;
-
+			  User user = userDao.findByEmailAndPassword(loginRequest.email, loginRequest.password);
+			  return new ResponseEntity<>( user, HttpStatus.OK) ;
 		  }
 		  catch (Exception ex) {
 			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getFail(), "Error creating the user: " + ex.toString()), HttpStatus.BAD_REQUEST);
 		  }
 	  }
 	  else {
-		  System.out.println("no valid appid");
 		  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"), HttpStatus.FORBIDDEN);
 	  }	
     
@@ -199,7 +151,6 @@ public class UserController extends BaseController {
 			  user.setAddress(addressRequest.address, addressRequest.city, addressRequest.country, addressRequest.zipcode);
 			  userDao.save(user);
 			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getSuccess(), "Success updating the user address"), HttpStatus.OK) ;
-			  
 		  }
 		  catch (Exception ex) {
 			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getFail(), "Error updating the user address: " + ex.toString()), HttpStatus.BAD_REQUEST);
@@ -263,4 +214,3 @@ return "User successfully updated!";
   private UserDao userDao;
   
 } // class UserController
-
