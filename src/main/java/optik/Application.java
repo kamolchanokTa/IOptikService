@@ -3,14 +3,16 @@ package optik;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableConfigurationProperties(AppProperties.class)
-public class Application {
-  public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
-  }
+@ComponentScan
+public class Application extends SpringBootServletInitializer {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
 
 }
