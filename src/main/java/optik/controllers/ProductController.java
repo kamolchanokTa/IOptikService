@@ -3,6 +3,7 @@ package optik.controllers;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +46,8 @@ public class ProductController extends BaseController {
 			@RequestHeader(value = "appId") String appid) {
 		if (isValidAppid(appid)) {
 			try {
-				byte[] imageBytes = productRequest.image.getBytes(StandardCharsets.UTF_8);
+				
+				byte[] imageBytes = Base64.getDecoder().decode(productRequest.image);
 				Product product = new Product(productRequest.name, productRequest.productType, productRequest.price,
 						imageBytes, productRequest.description);
 				productDao.save(product);
@@ -111,7 +113,7 @@ public class ProductController extends BaseController {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
 						"Error retrieve the products: " + ex.toString(), null), HttpStatus.FORBIDDEN);
 			}
-			return new ResponseEntity<>(productResponses, HttpStatus.OK);
+			return new ResponseEntity<>(new Response(getAppProperties().getStatus().getSuccess(), "Success retrieve products", productResponses), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(
 					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
