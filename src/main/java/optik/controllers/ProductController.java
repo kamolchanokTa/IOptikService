@@ -51,14 +51,14 @@ public class ProductController extends BaseController {
 				productDao.save(product);
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error creating the product: " + ex.toString()), HttpStatus.BAD_REQUEST);
+						"Error creating the product: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
 			}
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getSuccess(), "Product successfully created!"),
+					new Response(getAppProperties().getStatus().getSuccess(), "Product successfully created!", null),
 					HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 
@@ -72,16 +72,17 @@ public class ProductController extends BaseController {
 				UUID productid = UUID.fromString(id);
 				Product product = productDao.findById(productid).get();
 				productDao.delete(product);
+				return new ResponseEntity<>(
+						new Response(getAppProperties().getStatus().getSuccess(), "Product successfully deleted!", product),
+						HttpStatus.OK);
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error deleting the product: " + ex.toString()), HttpStatus.FORBIDDEN);
+						"Error deleting the product: " + ex.toString(), null), HttpStatus.FORBIDDEN);
 			}
-			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getSuccess(), "Product successfully deleted!"),
-					HttpStatus.OK);
+			
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 	}
@@ -108,12 +109,12 @@ public class ProductController extends BaseController {
 				}
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error retrieve the products: " + ex.toString()), HttpStatus.FORBIDDEN);
+						"Error retrieve the products: " + ex.toString(), null), HttpStatus.FORBIDDEN);
 			}
 			return new ResponseEntity<>(productResponses, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 	}
@@ -135,12 +136,12 @@ public class ProductController extends BaseController {
 						product.getPrice(), product.getDescription(), availableQuantity, product.getImage());
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error retrieve the product: " + ex.toString()), HttpStatus.FORBIDDEN);
+						"Error retrieve the product: " + ex.toString(), null), HttpStatus.FORBIDDEN);
 			}
 			return new ResponseEntity<>(productResponse, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 	}

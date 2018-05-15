@@ -50,7 +50,6 @@ public class User {
 	private String email;
 
 	// The user's password
-	@NotNull
 	private String password;
 
 	// The user's first name

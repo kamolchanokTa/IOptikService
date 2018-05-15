@@ -67,14 +67,14 @@ public class UserController extends BaseController {
 				userDao.save(user);
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error creating the user: " + ex.toString()), HttpStatus.BAD_REQUEST);
+						"Error creating the user: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
 			}
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getSuccess(), "User successfully created!"),
+					new Response(getAppProperties().getStatus().getSuccess(), "User successfully created!", user),
 					HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 
@@ -97,14 +97,14 @@ public class UserController extends BaseController {
 				userDao.delete(user);
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error deleting the user: " + ex.toString()), HttpStatus.FORBIDDEN);
+						"Error deleting the user: " + ex.toString(), null), HttpStatus.FORBIDDEN);
 			}
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getSuccess(), "User successfully deleted!"),
+					new Response(getAppProperties().getStatus().getSuccess(), "User successfully deleted!", null),
 					HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 	}
@@ -118,12 +118,12 @@ public class UserController extends BaseController {
 				users = userDao.findAll().iterator();
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error retrieve the users: " + ex.toString()), HttpStatus.FORBIDDEN);
+						"Error retrieve the users: " + ex.toString(), null), HttpStatus.FORBIDDEN);
 			}
 			return new ResponseEntity<>(users, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 	}
@@ -138,11 +138,11 @@ public class UserController extends BaseController {
 				return new ResponseEntity<>(user, HttpStatus.OK);
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error creating the user: " + ex.toString()), HttpStatus.BAD_REQUEST);
+						"Error creating the user: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
 			}
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 
@@ -160,15 +160,15 @@ public class UserController extends BaseController {
 						addressRequest.zipcode);
 				userDao.save(user);
 				return new ResponseEntity<>(
-						new Response(getAppProperties().getStatus().getSuccess(), "Success updating the user address"),
+						new Response(getAppProperties().getStatus().getSuccess(), "Success updating the user address", user),
 						HttpStatus.OK);
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error updating the user address: " + ex.toString()), HttpStatus.BAD_REQUEST);
+						"Error updating the user address: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
 			}
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 
@@ -185,15 +185,15 @@ public class UserController extends BaseController {
 				user.setCreditCard(creditCardRequest.creditcardnumber, creditCardRequest.creditcardtype, creditCardRequest.cardexpmonth, creditCardRequest.cardexpyear);
 				userDao.save(user);
 				return new ResponseEntity<>(
-						new Response(getAppProperties().getStatus().getSuccess(), "Success updating the user credit dard"),
+						new Response(getAppProperties().getStatus().getSuccess(), "Success updating the user credit dard", user),
 						HttpStatus.OK);
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error updating the user credit card: " + ex.toString()), HttpStatus.BAD_REQUEST);
+						"Error updating the user credit card: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
 			}
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 

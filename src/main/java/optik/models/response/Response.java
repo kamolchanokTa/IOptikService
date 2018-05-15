@@ -5,8 +5,11 @@ public class Response {
 	
 	public String message;
 	
-	public Response(String status,String  message) {
+	public Object data;
+	
+	public Response(String status,String  message, Object data) {
 		this.status = status;
 		this.message = message;
+		this.data = data;
 	}
 }

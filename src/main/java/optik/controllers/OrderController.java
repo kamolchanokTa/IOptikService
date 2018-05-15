@@ -80,14 +80,14 @@ public class OrderController extends BaseController {
 				}
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error creating the user: " + ex.toString()), HttpStatus.BAD_REQUEST);
+						"Error creating the user: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
 			}
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getSuccess(), "User successfully created!"),
+					new Response(getAppProperties().getStatus().getSuccess(), "User successfully created!", null),
 					HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 
@@ -121,11 +121,11 @@ public class OrderController extends BaseController {
 				return new ResponseEntity<>(orderResponse,HttpStatus.OK);
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error get the order by userid: " + ex.toString()), HttpStatus.BAD_REQUEST);
+						"Error get the order by userid: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
 			}
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 
@@ -153,11 +153,11 @@ public class OrderController extends BaseController {
 				return new ResponseEntity<>(order,HttpStatus.OK);
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error get the order by userid: " + ex.toString()), HttpStatus.BAD_REQUEST);
+						"Error get the order by userid: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
 			}
 		} else {
 			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"),
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
 					HttpStatus.FORBIDDEN);
 		}
 

@@ -42,12 +42,13 @@ public class StockController extends BaseController{
 				  stockDao.save(stock);
 			  }
 			  catch (Exception ex) {
-				  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getFail(), "Error creating the stock: " + ex.toString()), HttpStatus.BAD_REQUEST);
+				  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getFail(), "Error creating the stock: " + ex.toString(), null)
+						  , HttpStatus.BAD_REQUEST);
 			  }
-			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getSuccess(), "Stock successfully created!"), HttpStatus.OK) ;
+			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getSuccess(), "Stock successfully created!", null), HttpStatus.OK) ;
 		  }
 		  else {
-			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app"), HttpStatus.FORBIDDEN);
+			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null), HttpStatus.FORBIDDEN);
 		  }	
 	    
 	  }
