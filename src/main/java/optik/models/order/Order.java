@@ -48,11 +48,9 @@ public class Order {
 	private String email;
 
 	// The customer's first name
-	@NotNull
 	private String firstname;
 
 	// The customer's last name
-	@NotNull
 	private String lastname;
 
 	// The user's Date of birth

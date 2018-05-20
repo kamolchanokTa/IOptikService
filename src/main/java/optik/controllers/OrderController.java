@@ -53,7 +53,7 @@ public class OrderController extends BaseController {
 			Date convertedDate = null;
 			try {
 				if (orderRequest.orderdate != null) {
-					convertedDate = sdf.parse(orderRequest.orderdate);
+					convertedDate =new Date(System.currentTimeMillis());
 				}
 				order = new Order(orderRequest.email, orderRequest.firstname, orderRequest.lastname, convertedDate,
 						orderRequest.address, orderRequest.city, orderRequest.country, orderRequest.zipcode,
