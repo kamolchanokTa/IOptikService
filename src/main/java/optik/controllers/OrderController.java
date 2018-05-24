@@ -113,8 +113,7 @@ public class OrderController extends BaseController {
 					List<OrderDetail> orderdetails= StreamSupport
 							.stream(Spliterators.spliteratorUnknownSize(orderdetailist, Spliterator.ORDERED), false)
 							.collect(Collectors.<OrderDetail>toList());
-					orderResponse.add(new OrderResponse(order.getId(), order.getEmail(),order.getFirstName(), order.getLastName(), order.getOrderDate()
-							,order.getAddress(), order.getCity(), order.getCountry(), order.getZipcode(), order.getTotalPrice(), order.getUser(), orderdetails));
+					orderResponse.add(new OrderResponse(order.getId(), order.getTotalPrice(), order.getUser(), orderdetails, order.getTotalPrice(), order.getOrderDate().toString()));
 
 				}
 

@@ -26,7 +26,6 @@ public interface OrderDao extends CrudRepository<Order, UUID> {
    * 
    * @param email the user email.
    */
-  public Order findByEmail(String email);
   
   public ArrayList<Order> findByUser(User user);
 

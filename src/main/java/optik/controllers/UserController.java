@@ -135,7 +135,15 @@ public class UserController extends BaseController {
 		if (isValidAppid(appid)) {
 			try {
 				User user = userDao.findByEmailAndPassword(loginRequest.email, loginRequest.password);
-				return new ResponseEntity<>(user, HttpStatus.OK);
+				if(user != null) {
+					return new ResponseEntity<>(new Response(getAppProperties().getStatus().getSuccess(),"Found the user ", user)
+							, HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<>(
+							new Response(getAppProperties().getStatus().getFail(),"Cannot find user with this username and password", null)
+							, HttpStatus.NOT_FOUND);
+				}
 			} catch (Exception ex) {
 				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
 						"Error creating the user: " + ex.toString(), null), HttpStatus.BAD_REQUEST);

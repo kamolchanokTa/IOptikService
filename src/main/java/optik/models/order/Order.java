@@ -44,35 +44,14 @@ public class Order {
 	@Column(columnDefinition = "BINARY(16)")
 	private UUID id;
 
-	// The customer's email
-	private String email;
-
-	// The customer's first name
-	private String firstname;
-
-	// The customer's last name
-	private String lastname;
+	
 
 	// The user's Date of birth
 	@Column(name = "orderdate", columnDefinition = "DATETIME")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date orderdate;
 
-	// The customer's Address
-
-	private String address;
-
-	// The customer's city
-
-	private String city;
-
-	// The customer's country
-
-	private String country;
-
-	// The customer's zipcode
-
-	private String zipcode;
+	
 
 	@NotNull
 	private double totalprice;
@@ -84,13 +63,6 @@ public class Order {
 	public Order(String email, String firstName, String lastName, Date orderdate, String address, String city,
 			String country, String zipcode, double totalprice, String deliverymethod) {
 		this.orderdate = orderdate;
-		this.email = email;
-		this.firstname = firstName;
-		this.lastname = lastName;
-		this.address = address;
-		this.city = city;
-		this.country = country;
-		this.zipcode = zipcode;
 		this.totalprice = totalprice;
 		this.deliverymethod = deliverymethod;
 	}
@@ -112,51 +84,8 @@ public class Order {
 		this.id = value;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String value) {
-		this.email = value;
-	}
-
-	public String getName() {
-		return firstname.concat(" ").concat(lastname);
-	}
-	
-	public String getFirstName() {
-		return firstname;
-	}
-	
-	public String getLastName() {
-		return lastname;
-	}
-
 	public Date getOrderDate() {
-		return orderdate;
-	}
-
-	public void setAddress(String address, String city, String country, String zipcode) {
-		this.address = address;
-		this.city = city;
-		this.country = country;
-		this.zipcode = zipcode;
-	}
-
-	public String getAddress() {
-		return this.address;
-	}
-
-	public String getCity() {
-		return this.city;
-	}
-
-	public String getCountry() {
-		return this.country;
-	}
-
-	public String getZipcode() {
-		return this.zipcode;
+		return this.orderdate;
 	}
 	
 	public double getTotalPrice() {
