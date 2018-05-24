@@ -128,33 +128,95 @@ public class UserController extends BaseController {
 		}
 	}
 
+//	@RequestMapping(value = "/user/login", method = RequestMethod.POST)
+//	@ResponseBody
+//	public ResponseEntity<?> create(@RequestBody LoginRequest loginRequest,
+//			@RequestHeader(value = "appId") String appid) {
+//		if (isValidAppid(appid)) {
+//			try {
+//				User user = userDao.findByEmailAndPassword(loginRequest.email, loginRequest.password);
+//				if(user != null) {
+//					return new ResponseEntity<>(new Response(getAppProperties().getStatus().getSuccess(),"Found the user ", user)
+//							, HttpStatus.OK);
+//				}
+//				else {
+//					return new ResponseEntity<>(
+//							new Response(getAppProperties().getStatus().getFail(),"Cannot find user with this username and password", null)
+//							, HttpStatus.NOT_FOUND);
+//				}
+//			} catch (Exception ex) {
+//				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
+//						"Error creating the user: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
+//			}
+//		} else {
+//			return new ResponseEntity<>(
+//					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
+//					HttpStatus.FORBIDDEN);
+//		}
+//
+//	}
+	
 	@RequestMapping(value = "/user/login", method = RequestMethod.POST)
-	@ResponseBody
-	public ResponseEntity<?> create(@RequestBody LoginRequest loginRequest,
-			@RequestHeader(value = "appId") String appid) {
-		if (isValidAppid(appid)) {
-			try {
-				User user = userDao.findByEmailAndPassword(loginRequest.email, loginRequest.password);
-				if(user != null) {
-					return new ResponseEntity<>(new Response(getAppProperties().getStatus().getSuccess(),"Found the user ", user)
-							, HttpStatus.OK);
-				}
-				else {
-					return new ResponseEntity<>(
-							new Response(getAppProperties().getStatus().getFail(),"Cannot find user with this username and password", null)
-							, HttpStatus.NOT_FOUND);
-				}
-			} catch (Exception ex) {
-				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error creating the user: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
-			}
-		} else {
-			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
-					HttpStatus.FORBIDDEN);
-		}
+	  @ResponseBody
+	  public ResponseEntity<?>  create(@RequestBody LoginRequest loginRequest, @RequestHeader(value="appId") String appid, HttpServletRequest req) {
+		  System.out.println("Checking the authentication: " + loginRequest.email.toString());
+		  if(isValidAppid(appid) && req.getSession().getAttribute("User") == null) {
+			  try {
+				  User user = userDao.findByEmailAndPassword(loginRequest.email, loginRequest.password);
+				  if (user != null) {
+					  System.out.println("Successfully logined in...");
+					  System.out.println(req.getSession().getId());
+					  req.getSession().setAttribute("User", user);
+					  req.getSession().setMaxInactiveInterval(60*10);
+					  System.out.println(((User) req.getSession().getAttribute("User")).getEmail());
+				  }
+				  // return new ResponseEntity<>( user, HttpStatus.OK) ;
+				  return new ResponseEntity<>( user , HttpStatus.OK) ;
 
-	}
+			  }
+			  catch (Exception ex) {
+				  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getFail(), "Error creating the user: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
+			  }
+		  }
+		  else {
+			  if(req.getSession().getAttribute("User") != null) {
+				  System.out.println("Already logined...");
+				  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getSuccess(), "Already logined", null) , HttpStatus.OK) ;
+			  }
+			  else {
+				  System.out.println("no valid appid");
+				  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null), HttpStatus.FORBIDDEN);
+			  }
+		  }	
+	    
+	  }
+	  
+	  @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
+	  @ResponseBody
+	  public ResponseEntity<?>  logout(@RequestHeader(value="appId") String appid, HttpServletRequest req) {
+		  System.out.println("Login out...");
+		  if(isValidAppid(appid)) {
+			  try {
+				  if(req.getSession().getAttribute("User") != null)
+				  {
+					  req.getSession().setAttribute("User", null);
+					  System.out.println("Successfully logout...");
+					  req.getSession().invalidate();
+				  }
+				  // return new ResponseEntity<>( user, HttpStatus.OK) ;
+				  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getSuccess(), "Successfully logout", null), HttpStatus.OK) ;
+
+			  }
+			  catch (Exception ex) {
+				  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getFail(), "Error creating the user: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
+			  }
+		  }
+		  else {
+			  System.out.println("no valid appid");
+			  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null), HttpStatus.FORBIDDEN);
+		  }	
+	    
+	  }
 
 	@RequestMapping(value = "/user/update/address", method = RequestMethod.POST)
 	@ResponseBody
