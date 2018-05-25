@@ -258,6 +258,29 @@ public class UserController extends BaseController {
 
 	}
 	
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<?> getUser(String userid,
+			@RequestHeader(value = "appId") String appid) {
+		if (isValidAppid(appid)) {
+			try {
+				UUID uuid = UUID.fromString(userid);
+				User user = userDao.findById(uuid).get();
+				return new ResponseEntity<>(
+						new Response(getAppProperties().getStatus().getSuccess(), "Success get the user", user),
+						HttpStatus.OK);
+			} catch (Exception ex) {
+				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
+						"Error updating the user address: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
+			}
+		} else {
+			return new ResponseEntity<>(
+					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
+					HttpStatus.FORBIDDEN);
+		}
+
+	}
+	
 	@RequestMapping(value = "/user/update/credit", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<?> create(@RequestBody UpdateCreditCardRequest creditCardRequest,
