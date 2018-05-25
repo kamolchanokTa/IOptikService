@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -158,20 +159,30 @@ public class UserController extends BaseController {
 	
 	@RequestMapping(value = "/user/login", method = RequestMethod.POST)
 	  @ResponseBody
-	  public ResponseEntity<?>  create(@RequestBody LoginRequest loginRequest, @RequestHeader(value="appId") String appid, HttpServletRequest req) {
+	  public ResponseEntity<?>  create(@RequestHeader(value="sessionKey") String sessionKey,@RequestBody LoginRequest loginRequest, @RequestHeader(value="appId") String appid, HttpServletRequest req) {
 		  System.out.println("Checking the authentication: " + loginRequest.email.toString());
-		  if(isValidAppid(appid) && req.getSession().getAttribute("User") == null) {
+		  if(isValidAppid(appid) && req.getSession().getAttribute(sessionKey) == null) {
 			  try {
 				  User user = userDao.findByEmailAndPassword(loginRequest.email, loginRequest.password);
 				  if (user != null) {
 					  System.out.println("Successfully logined in...");
-					  System.out.println(req.getSession().getId());
-					  req.getSession().setAttribute("User", user);
-					  req.getSession().setMaxInactiveInterval(60*10);
-					  System.out.println(((User) req.getSession().getAttribute("User")).getEmail());
+					  
+					   HttpSession sess = req.getSession(true);
+					   String keySession = sess.getId();
+					  System.out.println("Key"+ keySession);
+					  sess.setAttribute(keySession, user);
+					  sess.setMaxInactiveInterval(60*10);
+					  System.out.println(((User) sess.getAttribute(keySession)).getEmail());
+					  System.out.println(sess.isNew());
+					  LoginResponse response = new LoginResponse(user,keySession);
+					  return new ResponseEntity<>(new Response(getAppProperties().getStatus().getSuccess(),"Found the user ", response )
+								, HttpStatus.OK);
 				  }
-				  // return new ResponseEntity<>( user, HttpStatus.OK) ;
-				  return new ResponseEntity<>( user , HttpStatus.OK) ;
+				  else {
+					  return new ResponseEntity<>(
+								new Response(getAppProperties().getStatus().getFail(),"Cannot find user with this username and password", null)
+								, HttpStatus.NOT_FOUND);
+				  }
 
 			  }
 			  catch (Exception ex) {
@@ -179,9 +190,12 @@ public class UserController extends BaseController {
 			  }
 		  }
 		  else {
-			  if(req.getSession().getAttribute("User") != null) {
+			  if(req.getSession().getAttribute(sessionKey) != null) {
 				  System.out.println("Already logined...");
-				  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getSuccess(), "Already logined", null) , HttpStatus.OK) ;
+				  HttpSession sess = req.getSession(false);
+				  User userstor = (User) sess.getAttribute(sessionKey);
+				   LoginResponse response = new LoginResponse(userstor,sessionKey);
+				  return new ResponseEntity<>( new Response(getAppProperties().getStatus().getSuccess(), "Already logined", response) , HttpStatus.OK) ;
 			  }
 			  else {
 				  System.out.println("no valid appid");
@@ -193,13 +207,13 @@ public class UserController extends BaseController {
 	  
 	  @RequestMapping(value = "/user/logout", method = RequestMethod.GET)
 	  @ResponseBody
-	  public ResponseEntity<?>  logout(@RequestHeader(value="appId") String appid, HttpServletRequest req) {
+	  public ResponseEntity<?>  logout(@RequestHeader(value="sessionKey") String sessionKey,@RequestHeader(value="appId") String appid, HttpServletRequest req) {
 		  System.out.println("Login out...");
 		  if(isValidAppid(appid)) {
 			  try {
-				  if(req.getSession().getAttribute("User") != null)
+				  if(req.getSession().getAttribute(sessionKey) != null)
 				  {
-					  req.getSession().setAttribute("User", null);
+					  req.getSession().setAttribute(sessionKey, null);
 					  System.out.println("Successfully logout...");
 					  req.getSession().invalidate();
 				  }

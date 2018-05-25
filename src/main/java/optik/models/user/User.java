@@ -123,6 +123,10 @@ public class User {
 	public void setEmail(String value) {
 		this.email = value;
 	}
+	
+	public char getUserType() {
+		return this.userType;
+	}
 
 	public String getName() {
 		return firstname.concat(" ").concat(lastname);
