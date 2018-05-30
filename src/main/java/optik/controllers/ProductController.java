@@ -32,6 +32,8 @@ import optik.models.response.ProductResponse;
 import optik.models.response.Response;
 import optik.models.stock.Stock;
 import optik.models.stock.StockDao;
+import optik.models.user.User;
+import optik.models.user.UserDao;
 
 @Controller
 public class ProductController extends BaseController {
@@ -45,19 +47,32 @@ public class ProductController extends BaseController {
 	public ResponseEntity<?> create(@RequestBody ProductRequest productRequest,
 			@RequestHeader(value = "appId") String appid) {
 		if (isValidAppid(appid)) {
-			try {
-				
-				byte[] imageBytes = Base64.getDecoder().decode(productRequest.image);
-				Product product = new Product(productRequest.name, productRequest.productType, productRequest.price,
-						imageBytes, productRequest.description);
-				productDao.save(product);
-			} catch (Exception ex) {
-				return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
-						"Error creating the product: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
+			UUID uuid = UUID.fromString(productRequest.userid);
+			User user = userDao.findById(uuid).get();
+			if(user.getUserType() == '0') {
+				try {
+					
+					byte[] imageBytes = Base64.getDecoder().decode(productRequest.image);
+					Product product = new Product(productRequest.name, productRequest.productType, productRequest.price,
+							imageBytes, productRequest.description);
+					productDao.save(product);
+					Date convertedDate = new Date();
+					Stock stock = new Stock(productRequest.amount,convertedDate);
+					stock.setProduct(product);
+					stockDao.save(stock);
+				} catch (Exception ex) {
+					return new ResponseEntity<>(new Response(getAppProperties().getStatus().getFail(),
+							"Error creating the product: " + ex.toString(), null), HttpStatus.BAD_REQUEST);
+				}
+				return new ResponseEntity<>(
+						new Response(getAppProperties().getStatus().getSuccess(), "Product successfully created!", null),
+						HttpStatus.OK);
 			}
-			return new ResponseEntity<>(
-					new Response(getAppProperties().getStatus().getSuccess(), "Product successfully created!", null),
-					HttpStatus.OK);
+			else {
+				return new ResponseEntity<>(
+						new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized user", null),
+						HttpStatus.FORBIDDEN);
+			}
 		} else {
 			return new ResponseEntity<>(
 					new Response(getAppProperties().getStatus().getUnautherized(), "Access By unauthorized app", null),
@@ -176,4 +191,7 @@ public class ProductController extends BaseController {
 
 	@Autowired
 	private StockDao stockDao;
+	
+	@Autowired
+	private UserDao userDao;
 }
